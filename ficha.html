@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de inventário – Coleção Digital da Casa da Cultura de Vimioso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>body{margin:0}</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <div class="inst">Museu Etnográfico da Casa da Cultura de Vimioso <span>· Município de Vimioso</span></div>
+    <span class="badge">Ficha de inventário · protótipo</span>
+  </div>
+</header>
+
+<nav class="secbar" aria-label="Secções da ficha">
+  <div class="wrap">
+    <a href="#ficha" data-sec="ficha">Ficha de inventário</a>
+    <a href="#pci" data-sec="pci">Património imaterial</a>
+  </div>
+</nav>
+
+<main id="app" class="wrap"><p class="muted" style="padding-top:28px">A carregar a ficha…</p></main>
+
+<footer>
+  <div class="wrap">
+    <span>Protótipo do repositório digital do projeto “Entre Memórias e Píxeis” (NORTE2030-FEDER-03007300) · MORE CoLAB e Município de Vimioso</span>
+    <span>Ficha em validação · objeto publicado com autorização do Município de Vimioso.</span>
+  </div>
+</footer>
+
+<script src="core.js"></script>
+<script>
+(function () {
+  var C = COL, esc = C.esc, has = C.has, row = C.row, app = document.getElementById('app');
+  var id = new URLSearchParams(location.search).get('id');
+  var o, imgIndex = 0;
+
+  function render() {
+    var a = C.assess(o), imgs = o.images || [], im = imgs[imgIndex] || imgs[0];
+    document.title = o.inv + ' ' + o.title_pt + ' – Coleção Digital da Casa da Cultura de Vimioso';
+    var h = '<div class="crumbs"><a class="btn quiet" href="./">← Coleção</a></div>';
+    h += '<section class="record" id="ficha"><div class="figure">';
+    if (has(o.viewer_url)) h += '<iframe class="viewer3d" title="Modelo 3D – ' + esc(o.title_pt) + '" src="' + esc(o.viewer_url) + '" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>';
+    else h += '<div class="main">' + (im ? '<img src="' + esc(C.imgSrc(im)) + '" alt="' + esc(im.alt || o.title_pt) + '">' : '<span class="muted">Sem imagem</span>') + '</div>';
+    if (has(o.viewer_url) && imgs.length) h += '<div class="thumbs">' + imgs.map(function (x, i) { return '<a href="' + esc(C.imgSrc(x)) + '" target="_blank" rel="noopener"><img src="' + esc(C.imgSrc(x)) + '" alt="' + esc(x.alt || '') + '" style="width:56px;height:56px;object-fit:cover;border:1px solid var(--rule);border-radius:6px"></a>'; }).join('') + '</div>';
+    h += '<div class="actions">';
+    if (has(o.viewer_page)) h += '<a class="btn solid" href="' + esc(o.viewer_page) + '" target="_blank" rel="noopener">Abrir no Sketchfab ↗</a>';
+    if (has(o.testimony_audio) || has(o.testimony_quote)) h += '<a class="btn" href="#testemunho">Ouvir testemunho</a>';
+    h += '</div></div><div>';
+    h += '<div class="invno">' + esc(o.inv) + (has(o.lot) ? ' · ' + esc(o.lot) : '') + '</div><h1>' + esc(o.title_pt) + '</h1>';
+    if (has(o.type_pt)) h += '<p class="sub">' + esc(o.type_pt) + '</p>';
+    h += '<dl class="fields">';
+    h += row('N.º de inventário', o.inv + (has(o.oldInv) ? '  (n.º antigo ' + o.oldInv + ')' : ''));
+    h += row('Título (EN)', o.title_en);
+    h += row('Tipologia', o.type_pt, o.type_uri);
+    h += row('Matéria', o.material_pt, o.material_uri);
+    h += row('Técnica', o.technique);
+    h += row('Dimensões', C.extent(o) + (has(o.extent_note) ? '\n' + o.extent_note : ''));
+    h += row('Decoração / marcas', o.decoration);
+    h += row('Descrição', o.desc_pt);
+    h += row('Proveniência / uso', o.provenance_pt, o.place_uri);
+    h += row('Autoria / oficina', o.creator, o.creator_uri);
+    h += row('Hipóteses de atribuição', o.attribution_note);
+    h += row('Datação', [o.date, o.period].filter(has).join(' · '));
+    h += row('Estado de conservação', o.condition ? o.condition + (o.condition_date ? ' (avaliação de ' + o.condition_date.split('-').reverse().join('/') + ')' : '') : '');
+    h += row('Localização', o.location);
+    h += '</dl><p class="note" style="margin-top:8px">Estado do registo: ' + esc(o.status || 'Rascunho') + (o.updatedAt ? ' · atualizado em ' + esc(o.updatedAt.split('-').reverse().join('/')) : '') + '</p></div></section>';
+
+    if (has(o.ich_domain) || has(o.ich_core) || has(o.ich_uses) || has(o.testimony_quote)) {
+      h += '<section class="block" id="pci"><div class="eyebrow">Património cultural imaterial associado</div><h2>Saber-fazer, usos e memória</h2><div class="cols">';
+      if (has(o.ich_domain) || has(o.ich_core)) h += '<div class="panel"><h3>Domínio e saber-fazer</h3><p>' + esc([o.ich_domain, o.ich_core].filter(has).join(' · ')) + '</p><span class="uri">' + esc([o.ich_domain_uri, o.ich_core_uri].filter(has).join(' · ')) + '</span></div>';
+      if (has(o.ich_uses)) h += '<div class="panel"><h3>Usos e práticas associadas</h3><p style="white-space:pre-line">' + esc(o.ich_uses) + '</p></div>';
+      h += '</div>';
+      if (has(o.testimony_quote) || has(o.testimony_audio)) {
+        h += '<div class="panel voice" id="testemunho" style="margin-top:14px"><div class="eyebrow">Testemunho da comunidade</div>';
+        if (has(o.testimony_ref)) h += '<h3 style="margin-top:4px">' + esc(o.testimony_ref) + '</h3>';
+        if (has(o.testimony_audio)) h += '<audio controls preload="none" src="' + esc(o.testimony_audio) + '"></audio>';
+        if (has(o.testimony_quote)) h += '<blockquote lang="pt">' + esc(o.testimony_quote) + '</blockquote>';
+        if (has(o.testimony_quote_en)) h += '<details><summary style="font:600 14px var(--display);color:var(--schist);cursor:pointer">Tradução para inglês</summary><blockquote lang="en" class="muted">' + esc(o.testimony_quote_en) + '</blockquote></details>';
+        if (has(o.testimony_credit)) h += '<p class="note">' + esc(o.testimony_credit) + '</p>';
+        h += '</div>';
+      }
+      h += '</section>';
+    }
+
+    app.innerHTML = h;
+    app.querySelectorAll('.filters button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        app.querySelectorAll('.filters button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        app.querySelectorAll('#edmRows tr').forEach(function (tr) { tr.hidden = !(b.dataset.f === 'all' || tr.dataset.s === b.dataset.f); });
+      });
+    });
+    var links = document.querySelectorAll('.secbar a');
+    links.forEach(function (l) { var t = document.getElementById(l.dataset.sec); l.hidden = !t; });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle('on', a.dataset.sec === e.target.id); }); }); }, { rootMargin: '-40% 0px -55% 0px' });
+      ['ficha', 'pci'].forEach(function (k) { var el = document.getElementById(k); if (el) io.observe(el); });
+    }
+    if (location.hash) { var tgt = document.getElementById(location.hash.slice(1)); if (tgt) tgt.scrollIntoView(); }
+  }
+
+  C.load().then(function (list) {
+    o = list.filter(function (x) { return C.docId(x.inv) === id; })[0] || (id ? null : list[0]);
+    if (!o) { app.innerHTML = '<div class="empty" style="margin-top:28px"><h3>Ficha não encontrada</h3><p><a class="btn" href="./">Voltar à coleção</a></p></div>'; return; }
+    render();
+  }).catch(function () { app.innerHTML = '<div class="empty" style="margin-top:28px"><h3>Não foi possível carregar a ficha</h3></div>'; });
+})();
+</script>
+</body>
+</html>

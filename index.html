@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coleção Digital – Museu Etnográfico da Casa da Cultura de Vimioso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>body{margin:0}</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <div class="inst">Museu Etnográfico da Casa da Cultura de Vimioso <span>· Município de Vimioso</span></div>
+    <span class="badge">Coleção digital · protótipo</span>
+  </div>
+</header>
+
+<main id="app" class="wrap">
+  <div class="head"><div><h1>Coleção digital</h1><p>A carregar os registos da coleção…</p></div></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Protótipo do repositório digital do projeto “Entre Memórias e Píxeis” (NORTE2030-FEDER-03007300) · MORE CoLAB e Município de Vimioso</span>
+    <span>Registos em validação. Mapeamento segundo o Europeana Data Model (EDM) e as diretrizes da Europeana para conteúdos 3D.</span>
+  </div>
+</footer>
+
+<script src="core.js"></script>
+<script>
+(function () {
+  var C = COL, app = document.getElementById('app'), objs = [], q = '';
+  function render() {
+    var term = q.toLowerCase();
+    var shown = objs.filter(function (o) { return !term || [o.inv, o.title_pt, o.title_en, o.type_pt, o.material_pt, o.provenance_pt, o.ich_core].join(' ').toLowerCase().indexOf(term) >= 0; });
+    var n3d = objs.filter(function (o) { return C.has(o.viewer_url); }).length;
+    var nT = objs.filter(function (o) { return C.has(o.testimony_quote) || C.has(o.testimony_audio); }).length;
+    var nReady = objs.filter(function (o) { return C.assess(o).submittable; }).length;
+    var h = '<div class="head"><div><h1>Coleção digital</h1><p>Fichas de inventário, património imaterial associado e preparação para a Europeana.</p></div></div>';
+    h += '<div class="stats"><div class="stat"><b>' + objs.length + '</b><span>objetos com ficha</span></div><div class="stat"><b>' + n3d + '</b><span>com modelo 3D</span></div><div class="stat"><b>' + nT + '</b><span>com testemunho da comunidade</span></div><div class="stat"><b>' + nReady + '</b><span>prontos a submeter à Europeana</span></div></div>';
+    h += '<div class="toolbar"><input id="q" type="search" placeholder="Pesquisar por n.º, denominação, matéria, local…" value="' + C.esc(q) + '" aria-label="Pesquisar"></div>';
+    if (!shown.length) h += '<div class="empty"><h3>' + (objs.length ? 'Nenhum objeto corresponde à pesquisa' : 'Ainda não há fichas') + '</h3></div>';
+    else {
+      h += '<div class="grid">';
+      shown.forEach(function (o) {
+        var a = C.assess(o), pct = Math.round(a.okReq / a.totalReq * 100), im = (o.images || [])[0];
+        h += '<a class="card" style="text-decoration:none" href="ficha.html?id=' + encodeURIComponent(C.docId(o.inv)) + '">';
+        h += '<div class="ph">' + (im ? '<img src="' + C.esc(C.imgSrc(im)) + '" alt="" loading="lazy">' : '<span>Sem imagem</span>') + '</div>';
+        h += '<div class="bd"><div class="inv">' + C.esc(o.inv) + '</div><h3>' + C.esc(o.title_pt) + '</h3>';
+        h += '<div class="row"><span class="chip st">' + C.esc(o.status || 'Rascunho') + '</span>' + (C.has(o.viewer_url) ? '<span class="chip ok">3D</span>' : '') + (C.has(o.testimony_audio) ? '<span class="chip ok">Testemunho</span>' : '') + '</div>';
+        h += '<div class="meter"><i style="width:' + pct + '%"></i></div><span class="muted" style="font:12.5px var(--display)">Europeana: ' + a.okReq + ' de ' + a.totalReq + ' requisitos</span></div></a>';
+      });
+      h += '</div>';
+    }
+    app.innerHTML = h;
+    var qi = document.getElementById('q');
+    qi.addEventListener('input', function () { q = qi.value; var p = qi.selectionStart; render(); var n = document.getElementById('q'); n.focus(); try { n.setSelectionRange(p, p); } catch (e) {} });
+  }
+  C.load().then(function (d) { objs = d.sort(function (a, b) { return String(a.inv).localeCompare(String(b.inv), 'pt', { numeric: true }); }); render(); })
+    .catch(function () { app.innerHTML = '<div class="empty" style="margin-top:28px"><h3>Não foi possível carregar a coleção</h3><p class="muted">Verifique o ficheiro objects.json.</p></div>'; });
+})();
+</script>
+</body>
+</html>
