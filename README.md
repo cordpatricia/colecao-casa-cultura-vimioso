@@ -3,21 +3,24 @@
 Protótipo do repositório digital da coleção, preparado pela equipa do MORE CoLAB no âmbito do projeto
 “Entre Memórias e Píxeis” (NORTE2030-FEDER-03007300), para o Município de Vimioso.
 
-**Página da coleção:** `https://<utilizador>.github.io/<repositório>/`
-**Ficha-modelo:** `ficha.html?id=MECC.0193`
+**Página da coleção:** https://cordpatricia.github.io/colecao-casa-cultura-vimioso/
+**Ficha-modelo (cântara MECC.0193):** https://cordpatricia.github.io/colecao-casa-cultura-vimioso/ficha.html?id=MECC.0193
 
-Cada ficha reúne o registo de inventário, o património imaterial associado (com testemunhos da comunidade),
-as representações digitais (modelo 3D, imagens, paradados) e a preparação do registo para a Europeana
-(Europeana Data Model, níveis de qualidade e XML gerado automaticamente).
+Cada ficha reúne:
+
+- **Ficha de inventário** – identificação, tipologia, matéria, técnica, dimensões, descrição, proveniência,
+  estado de conservação e localização, com o modelo 3D do objeto quando existe;
+- **Património imaterial associado** – saber-fazer, usos e práticas, e testemunhos da comunidade
+  (áudio e transcrição).
 
 ## Ficheiros
 
 | Ficheiro | Conteúdo |
 |---|---|
 | `index.html` | Lista da coleção, com pesquisa |
-| `ficha.html` | Ficha de inventário de um objeto (`ficha.html?id=<n.º de inventário>`) |
+| `ficha.html` | Ficha de um objeto (`ficha.html?id=<n.º de inventário>`) |
 | `objects.json` | **Os dados da coleção** – um registo por objeto |
-| `core.js` | Modelo de campos, avaliação Europeana e geração do registo EDM |
+| `core.js` | Modelo de campos e funções comuns às páginas |
 | `style.css` | Aspeto das páginas |
 | `media/` | Imagens e áudios dos objetos |
 
@@ -29,11 +32,10 @@ as representações digitais (modelo 3D, imagens, paradados) e a preparação do
    Campos sem informação podem ser apagados.
 4. Guardar com **Commit changes**. A página atualiza-se em 1–2 minutos.
 
-O campo `inv` (n.º de inventário) é obrigatório e identifica a ficha no endereço. Os nomes dos campos e a
-propriedade EDM correspondente estão definidos em `core.js` (lista `F`).
+O campo `inv` (n.º de inventário) é obrigatório e identifica a ficha no endereço. Os nomes dos campos estão
+definidos em `core.js` (lista `F`).
 
 ## Estado
 
-Ficha-modelo em validação pela museóloga do projeto. Pendentes para a submissão à Europeana: declaração de
-direitos (decisão do Município), finalidade da digitalização, agregador, endereços estáveis do ficheiro 3D,
-da miniatura e da página do objeto, datação.
+Ficha-modelo em validação pela museóloga do projeto. Conteúdos publicados com autorização do Município de
+Vimioso e com o consentimento dos entrevistados. Todos os direitos reservados.
