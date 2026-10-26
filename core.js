@@ -211,12 +211,25 @@ var COL = (function () {
   }
 
 
+  // Converte o URI de referência (guardado em objects.json) num link para a página legível do vocabulário.
+  function uriLink(uri) {
+    if (!has(uri)) return '';
+    var u = String(uri).trim(), m, href = u, label = u;
+    if ((m = u.match(/wikidata\.org\/(?:entity|wiki)\/(Q\d+)/))) { href = 'https://www.wikidata.org/wiki/' + m[1]; label = 'Wikidata ' + m[1]; }
+    else if ((m = u.match(/vocab\.getty\.edu\/(?:page\/)?aat\/(\d+)/))) { href = 'https://vocab.getty.edu/page/aat/' + m[1]; label = 'Getty AAT ' + m[1]; }
+    else if ((m = u.match(/geonames\.org\/(\d+)/))) { href = 'https://www.geonames.org/' + m[1]; label = 'GeoNames ' + m[1]; }
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener" title="' + esc(u) + '">' + esc(label) + ' ↗</a>';
+  }
+  function uris() {
+    var l = Array.prototype.slice.call(arguments).filter(has).map(uriLink);
+    return l.length ? '<span class="uri">' + l.join(' · ') + '</span>' : '';
+  }
   function row(label, value, uri) {
     if (!has(value) && !has(uri)) return '';
-    return '<dt>' + esc(label) + '</dt><dd>' + esc(value || '') + (has(uri) ? '<span class="uri">' + esc(uri) + '</span>' : '') + '</dd>';
+    return '<dt>' + esc(label) + '</dt><dd>' + esc(value || '') + uris(uri) + '</dd>';
   }
   function load() {
     return fetch('objects.json', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
   }
-  return { F: F, SECTIONS: SECTIONS, RIGHTS: RIGHTS, esc: esc, has: has, extent: extent, assess: assess, edm: edm, rightsLabel: rightsLabel, imgSrc: imgSrc, docId: docId, row: row, load: load };
+  return { F: F, SECTIONS: SECTIONS, RIGHTS: RIGHTS, esc: esc, has: has, extent: extent, assess: assess, edm: edm, rightsLabel: rightsLabel, imgSrc: imgSrc, docId: docId, row: row, uris: uris, load: load };
 })();

@@ -23,6 +23,7 @@ Cada ficha reúne:
 | `core.js` | Modelo de campos e funções comuns às páginas |
 | `style.css` | Aspeto das páginas |
 | `media/` | Imagens e áudios dos objetos |
+| `img/` | Logótipo da Casa da Cultura de Vimioso (versão do projeto, segundo o Manual de Identidade Visual) |
 
 ## Como acrescentar um objeto
 
